@@ -1,0 +1,62 @@
+{
+  "name": "llama-jack",
+  "version": "1.3.0",
+  "description": "Llama Jack - Your AI Workspace Companion with Enhanced Reliability & Accurate Token Management",
+  "main": "hi-jack-engine.js",
+  "bin": {
+    "hi": "./hi-jack-smart.js"
+  },
+  "preferGlobal": true,
+  "scripts": {
+    "start": "node hi-jack-engine.js",
+    "dev": "nodemon hi-jack-engine.js",
+    "server": "node server.js",
+    "lint": "echo 'ESLint not configured yet. Run: npm install --save-dev eslint && npx eslint --init'",
+    "test": "node --test --test-reporter=spec --test-reporter-destination=stdout",
+    "test:watch": "node --test --watch",
+    "security-audit": "npm audit && npm audit fix --audit-level moderate",
+    "check-deps": "npm outdated",
+    "validate": "npm run lint && npm run test && npm run security-audit"
+  },
+  "keywords": [
+    "llama",
+    "ollama",
+    "ai",
+    "jack",
+    "workspace",
+    "companion",
+    "web-search",
+    "tools",
+    "cloud",
+    "local",
+    "ide",
+    "file-explorer"
+  ],
+  "author": "Yufok1",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "clipboardy": "^5.0.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "fs-extra": "^11.2.0",
+    "ollama": "^0.5.18",
+    "tiktoken": "^1.0.22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yufok1/Llama-Jack.git"
+  },
+  "homepage": "https://github.com/Yufok1/Llama-Jack#readme",
+  "bugs": {
+    "url": "https://github.com/Yufok1/Llama-Jack/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ]
+}

@@ -1,0 +1,71 @@
+# Environment files - SECURITY CRITICAL
+.env
+.env.local
+.env.production
+.env.cloud
+.env.development
+.env.*.local
+.env.backup
+
+# Allow .env.example for template usage
+!.env.example
+
+# API Keys and secrets
+**/api-keys.json
+**/secrets.json
+**/.secrets
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node modules
+node_modules/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Edit history - Contains user file content
+.edits/
+*.backup
+*.bak
+
+# Telemetry data - Runtime metrics and usage data
+.telemetry/
+
+# Session memory - Conversation and context data
+.memory/
+
+# User data and caches
+user-data/
+cache/
+.cache/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Sensitive logs
+debug.log
+error.log
+access.log
