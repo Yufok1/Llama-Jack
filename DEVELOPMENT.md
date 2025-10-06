@@ -79,6 +79,30 @@ Human-in-the-loop edit approval system:
 - Rich CLI status monitoring and health checks
 - Session memory management and cleanup
 
+### Canvas AI Orchestration System (`canvas/`)
+**Web-based AI analysis interface with multi-agent orchestration:**
+
+#### `canvas-with-observation-feeds.html` - Main Canvas Interface
+- 5-agent AI system (DJINN, NAZAR, NARRA, WHALE, WATCHTOWER)
+- Document analysis and synthesis engine
+- Live observation feeds and real-time AI insights
+- localStorage and IndexedDB data persistence
+
+#### Canvas-Jack Integration (`hi-jack-engine.js`)
+- REST API endpoints for cross-system communication
+- Data synchronization and accumulation
+- Event-driven updates with deduplication
+- Cross-session data persistence
+
+**Canvas Development:**
+```bash
+# Open Canvas in browser
+start canvas/canvas-with-observation-feeds.html
+
+# Canvas works independently but syncs with Jack when available
+# Data accumulates in both localStorage and Jack's storage
+```
+
 ## 🔧 Development Workflow
 
 ### 1. Local Development

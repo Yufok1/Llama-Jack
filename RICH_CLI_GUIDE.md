@@ -35,6 +35,13 @@ usage            # Web search usage tracking and limits
 usage-models     # Detailed model performance analytics
 monitor          # Show system monitoring status
 tokenomics       # Display API resource usage
+canvas-status    # Canvas integration status and data accumulation
+```
+
+### 🔍 **Canvas Data Search** 🚀
+```bash
+canvas_grep_synthesis  # Advanced grep search through Canvas synthesis reports
+canvas_grep_feeds      # Advanced grep search through AI feeds from all agents
 ```
 
 ### 🌐 **Mode & Configuration**
@@ -90,6 +97,76 @@ The `status` command provides a comprehensive overview:
   • 📊 Usage Tracking & Performance Monitoring
   • ⚡ Multi-model Cloud & Local Support
 ```
+
+### 🔍 **Canvas Data Search Integration** 🚀
+
+**NEW: Advanced search capabilities through Canvas AI data with full constraint and commentary integration.**
+
+#### **Canvas Synthesis Report Search**
+The `canvas_grep_synthesis` command provides grep-level search through Canvas synthesis reports:
+
+```bash
+# Basic search through all synthesis reports
+Rich CLI > canvas_grep_synthesis { pattern: "machine learning" }
+
+# Advanced search with constraints
+Rich CLI > constrain { operation: "canvas_grep_synthesis", constraints: { maxResults: 5, dateRange: "last_24h" } }
+Rich CLI > canvas_grep_synthesis { pattern: "quantum.*entanglement", isRegex: true, roundId: "round_001" }
+```
+
+**Search Capabilities:**
+- ✅ **Regex patterns** with full syntax support
+- ✅ **Date range filtering** (last_24h, last_week, custom ranges)
+- ✅ **Round ID filtering** (specific synthesis sessions)
+- ✅ **Context lines** before/after matches
+- ✅ **Result limiting** with maxResults
+- ✅ **Case sensitivity** control
+
+#### **Canvas AI Feed Search**
+The `canvas_grep_feeds` command searches through real-time AI analysis feeds:
+
+```bash
+# Search all AI feeds for errors
+Rich CLI > canvas_grep_feeds { pattern: "error" }
+
+# Agent-specific pattern analysis
+Rich CLI > canvas_grep_feeds { pattern: "pattern", agentFilter: ["NAZAR", "NARRA"], contentType: "pattern" }
+```
+
+**Search Capabilities:**
+- ✅ **Regex patterns** with full syntax support
+- ✅ **Agent filtering** (DJINN, NAZAR, NARRA, WHALE, WATCHTOWER)
+- ✅ **Content type filtering** (governance, emotional, pattern, analysis, operational)
+- ✅ **Date range filtering** (last_24h, last_week)
+- ✅ **Result limiting** with maxResults
+- ✅ **Case sensitivity** control
+
+#### **Constraint Integration**
+Canvas search commands work seamlessly with the constraint system:
+
+```bash
+# Set constraints for synthesis search
+Rich CLI > constrain { 
+  operation: "canvas_grep_synthesis", 
+  constraints: { maxResults: 3, contextLines: 2, dateRange: "last_week" } 
+}
+
+# Execute constrained search
+Rich CLI > canvas_grep_synthesis { pattern: "neural network" }
+```
+
+#### **Automatic Commentary Integration**
+All Canvas searches include automatic commentary for analysis assessment:
+
+```
+🔍 Canvas synthesis search found 3 matches for "neural network"
+   - Analysis spans 2 synthesis reports with 8 total matches
+   - Key insights: Neural network patterns identified in recent reports
+
+🎙️ COMMENTARY [analysis]: Found 3 matches in synthesis reports about neural networks...
+```
+
+This provides the same **planning and continuation workflow** for Canvas data that exists for workspace file operations.
 
 ### 🤖 **Interactive Model Selector**
 The `select` command opens a visual model picker:

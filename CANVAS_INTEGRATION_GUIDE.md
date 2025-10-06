@@ -200,6 +200,206 @@ export JACK_CANVAS_PRIORITY=auto
 hi jack --canvas-bridge --monitor
 ```
 
+---
+
+## �️ **Canvas HTML Interface Overview**
+
+The Canvas system provides a sophisticated web-based interface that integrates seamlessly with Jack's AI workspace capabilities. The interface is organized in a responsive grid layout with specialized panels for different functions.
+
+### **Interface Layout**
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    🜂 CANVAS HEADER                      │
+│         Orchestration Status & System Controls         │
+├─────────────────────┬───────────────────────────────────┤
+│                     │                                   │
+│    📝 SOVEREIGN     │      📡 LIVE AI FEEDS & CHAT      │
+│       CANVAS        │                                   │
+│   (Document Editor) │   • DJINN Analysis Feed           │
+│                     │   • NAZAR Pattern Recognition     │
+│                     │   • NARRA Emotional Intelligence  │
+│                     │   • WHALE Governance Oversight    │
+│                     │   • WATCHTOWER Surveillance       │
+├─────────────────────┼───────────────────────────────────┤
+│                     │                                   │
+│   📊 SYNTHESIS      │      🎯 JACK TERMINAL MIRROR      │
+│    REPORTS          │                                   │
+│   (AI Analysis)     │   • Real-time Jack Commands       │
+│                     │   • Canvas Search Integration     │
+│                     │   • Constraint & Commentary       │
+│                     │   • Live Metrics & Status         │
+└─────────────────────┴───────────────────────────────────┘
+```
+
+### **Panel Functions**
+
+#### **🎯 Header Panel**
+- **Orchestration Status**: Real-time system health and AI agent status
+- **Mode Indicators**: Local/cloud operation modes, load balancing status
+- **System Controls**: Quick access to configuration and monitoring
+
+#### **📝 Sovereign Canvas (Main Editor)**
+- **Rich Text Editor**: Full document editing with formatting
+- **AI Integration**: Direct connection to all 5 AI agents
+- **Real-time Analysis**: Live feedback from AI systems during editing
+- **Data Persistence**: Automatic saving to localStorage and IndexedDB
+
+#### **📡 Live AI Feeds & Chat**
+- **Agent Feeds**: Real-time output from all AI agents (DJINN, NAZAR, NARRA, WHALE, WATCHTOWER)
+- **Interactive Chat**: Direct communication with individual AI agents
+- **Feed Filtering**: Filter by agent, content type, or time range
+- **Live Updates**: Continuous streaming of AI analysis and insights
+
+#### **📊 Synthesis Reports**
+- **Contextual Reports**: AI-generated analysis reports with developmental continuity
+- **Round-based Organization**: Synthesis reports organized by analysis sessions
+- **Search Integration**: Full grep-level search capabilities via Jack
+- **Historical Analysis**: Build-up of insights across multiple sessions
+
+#### **🎯 Jack Terminal Mirror**
+- **Live Command Interface**: Real-time mirroring of Jack's Rich CLI
+- **Canvas Search Commands**: Direct access to `canvas_grep_synthesis` and `canvas_grep_feeds`
+- **Constraint Controls**: Apply search constraints and view commentary
+- **System Integration**: Seamless workflow between Canvas and Jack operations
+
+### **Key Integration Features**
+
+#### **🔄 Real-time Synchronization**
+- **Bidirectional Data Flow**: Canvas data automatically syncs with Jack's workspace
+- **Live Updates**: Changes in either system reflect immediately in both
+- **State Persistence**: All data persists across browser sessions and system restarts
+
+#### **🔍 Advanced Search Integration**
+- **Grep-level Precision**: Search through synthesis reports and AI feeds with regex support
+- **Constraint System**: Apply limits, filters, and operational constraints
+- **Automatic Commentary**: AI-powered analysis assessment and planning
+- **Rich CLI Access**: Full terminal control over Canvas search operations
+
+#### **⚡ Performance Optimization**
+- **Load Balancing**: Automatic distribution between local and cloud Ollama instances
+- **Resource Prioritization**: Intelligent allocation based on current workload
+- **Background Processing**: Non-blocking AI operations and data synchronization
+
+### **Quick Start with Interface**
+
+1. **Open Canvas HTML**: Navigate to `canvas/canvas-with-observation-feeds.html`
+2. **Enable Coordination**: Set `localStorage.setItem('canvas_jack_bridge_enabled', 'true')`
+3. **Start Jack**: Launch with `hi jack --canvas-bridge`
+4. **Begin Analysis**: Start typing in the Canvas editor to trigger AI analysis
+5. **Monitor Feeds**: Watch real-time AI insights in the Live Feeds panel
+6. **Search & Analyze**: Use Jack's terminal to perform advanced searches through accumulated data
+
+---
+
+## �🔍 **Enhanced Canvas Search Integration** 🚀
+
+**NEW: Jack now provides advanced search capabilities through Canvas data with full constraint and commentary integration.**
+
+### **Available Canvas Search Tools**
+
+**1. `canvas_grep_synthesis`** - Search through synthesis reports
+```javascript
+// Basic search
+canvas_grep_synthesis({ pattern: "machine learning" })
+
+// Advanced search with constraints
+constrain({
+  operation: "canvas_grep_synthesis",
+  constraints: { maxResults: 5, contextLines: 2, dateRange: "last_24h" }
+})
+canvas_grep_synthesis({ 
+  pattern: "quantum.*entanglement", 
+  isRegex: true,
+  roundId: "round_001" 
+})
+```
+
+**2. `canvas_grep_feeds`** - Search through AI feeds
+```javascript
+// Search all AI feeds
+canvas_grep_feeds({ pattern: "error" })
+
+// Agent-specific search
+canvas_grep_feeds({ 
+  pattern: "analysis", 
+  agentFilter: ["DJINN", "WATCHTOWER"],
+  contentType: "governance",
+  maxResults: 10
+})
+```
+
+### **Search Capabilities**
+
+| Feature | canvas_grep_synthesis | canvas_grep_feeds |
+|---------|----------------------|-------------------|
+| **Regex Support** | ✅ Full regex patterns | ✅ Full regex patterns |
+| **Case Sensitivity** | ✅ Configurable | ✅ Configurable |
+| **Context Lines** | ✅ Before/after matches | ❌ (single line results) |
+| **Date Filtering** | ✅ last_24h, last_week, custom | ✅ last_24h, last_week |
+| **Agent Filtering** | ❌ N/A | ✅ Specific AI agents |
+| **Content Type Filter** | ❌ N/A | ✅ governance, emotional, pattern, analysis, operational |
+| **Round ID Filter** | ✅ Specific synthesis rounds | ❌ N/A |
+| **Constraint Integration** | ✅ Full constrain tool support | ✅ Full constrain tool support |
+| **Automatic Commentary** | ✅ Analysis assessment | ✅ Feed analysis |
+
+### **Constraint Integration Examples**
+
+**Time-based synthesis search:**
+```javascript
+constrain({
+  operation: "canvas_grep_synthesis",
+  constraints: { 
+    maxResults: 3, 
+    dateRange: "last_week",
+    contextLines: 1 
+  }
+})
+canvas_grep_synthesis({ pattern: "neural network" })
+```
+
+**Agent-focused feed analysis:**
+```javascript
+constrain({
+  operation: "canvas_grep_feeds", 
+  constraints: { 
+    maxResults: 5,
+    agentFilter: ["NAZAR", "NARRA"]
+  }
+})
+canvas_grep_feeds({ pattern: "pattern", contentType: "pattern" })
+```
+
+### **Commentary Integration**
+
+**Automatic commentary provides analysis between search operations:**
+```javascript
+// After synthesis search:
+commentary({
+    channel: "analysis",
+    content: "Found 3 matches in synthesis reports about neural networks..."
+})
+
+// After feed search:
+commentary({
+    channel: "analysis", 
+    content: "AI feed search revealed pattern analysis from NAZAR and NARRA..."
+})
+```
+
+### **Workflow Integration**
+
+**Canvas search follows the same planning/continuation pattern as workspace operations:**
+```
+1. Set constraints for Canvas search operation
+2. Execute Canvas search with parameters
+3. Automatic commentary assessment of results
+4. Decision point: continue, refine, or analyze
+5. Next action based on commentary insights
+```
+
+This provides **grep-level precision** for Canvas data with the same **intelligent workflow** used for file operations.
+
 ## 📊 **Monitoring Commands**
 
 ```bash
@@ -215,7 +415,49 @@ jack> system-orchestrate priority-canvas
 jack> system-orchestrate priority-jack
 ```
 
-## 🚨 **Troubleshooting**
+## � **Data Synchronization & Accumulation**
+
+### **Cross-System Data Flow**
+Canvas and Jack maintain synchronized intelligence through automatic data accumulation:
+
+**Data Types Synchronized:**
+- **Analysis History**: AI agent responses and insights
+- **Synthesis Reports**: Collaborative AI synthesis outputs  
+- **AI Feeds**: Live observation data from all 5 agents
+- **Session State**: Configuration and context persistence
+
+**Synchronization Process:**
+```
+Canvas Analysis → localStorage → Jack API → IndexedDB Storage
+       ↓              ↓              ↓              ↓
+   AI Insights   State Persistence  Deduplication  Historical Archive
+       ↓              ↓              ↓              ↓
+   Meta-Analysis Cross-Session Correlation Evolutionary Synthesis
+```
+
+### **Monitoring Data Accumulation**
+```bash
+# Check Canvas-Jack data status
+jack> canvas-status
+
+# View accumulated data summary
+# Shows: localStorage keys, IndexedDB stores, total records
+```
+
+### **Data Persistence**
+- **Session Continuity**: Data persists across browser refreshes
+- **Cross-Session Accumulation**: Historical data builds over time
+- **Deduplication**: Prevents duplicate entries during sync
+- **Rich CLI Access**: All accumulated data accessible via terminal
+
+### **Meta-Analysis Capabilities**
+Jack can perform meta-analysis on accumulated Canvas data:
+- **Trend Analysis**: Patterns across multiple analysis sessions
+- **Evolutionary Insights**: How AI understanding develops over time
+- **Correlation Discovery**: Relationships between different AI perspectives
+- **Synthesis Optimization**: Improving collaborative AI outputs
+
+## �🚨 **Troubleshooting**
 
 ### **Common Issues**
 

@@ -3574,11 +3574,25 @@ OllamaJackCLI.prototype.displayCanvasStatus = async function(jackUrl) {
             }
         }
         
-        // IndexedDB Status
+        // IndexedDB Status with content preview
         console.log(`\x1b[93m🗄️ IndexedDB:\x1b[0m ${status.indexedDB.available ? '\x1b[92m✅' : '\x1b[91m❌'} ${status.indexedDB.storeCount} stores\x1b[0m`);
-        if (status.indexedDB.available && status.indexedDB.stores.length > 0) {
+        if (status.indexedDB.available && status.indexedDB.storeSummaries && status.indexedDB.storeSummaries.length > 0) {
+            status.indexedDB.storeSummaries.forEach((storeSummary, index) => {
+                if (index < 3) { // Show first 3 stores with content preview
+                    console.log(`   \x1b[90m• ${storeSummary.name}\x1b[0m`);
+                    console.log(`     \x1b[36m${storeSummary.recordCount} records • Latest: ${storeSummary.latestTimestamp ? new Date(storeSummary.latestTimestamp).toLocaleTimeString() : 'No timestamp'}\x1b[0m`);
+                    console.log(`     \x1b[90m"${storeSummary.latestPreview}"\x1b[0m`);
+                } else if (index === 3) {
+                    console.log(`   \x1b[90m• ... and ${status.indexedDB.storeSummaries.length - 3} more stores\x1b[0m`);
+                }
+            });
+            
+            // Show total accumulated records
+            console.log(`   \x1b[92m📊 Total accumulated records: ${status.indexedDB.totalRecords}\x1b[0m`);
+        } else if (status.indexedDB.available && status.indexedDB.stores && status.indexedDB.stores.length > 0) {
+            // Fallback to old format
             status.indexedDB.stores.forEach((store, index) => {
-                if (index < 3) { // Show first 3 stores
+                if (index < 3) {
                     console.log(`   \x1b[90m• ${store}\x1b[0m`);
                 } else if (index === 3) {
                     console.log(`   \x1b[90m• ... and ${status.indexedDB.stores.length - 3} more\x1b[0m`);
@@ -4284,7 +4298,7 @@ OllamaJackCLI.prototype.displayWorkspaceExplorer = async function() {
 };
 
 OllamaJackCLI.prototype.displayDirectoryTreeWithNumbers = async function(dirPath, prefix = '', depth = 0) {
-    if (depth > 2) return; // Limit depth for cleaner display
+    if (depth > 4) return; // Allow deeper directory exploration in workspace mode
     
     try {
         const fs = require('fs');
@@ -4306,7 +4320,7 @@ OllamaJackCLI.prototype.displayDirectoryTreeWithNumbers = async function(dirPath
             } catch {
                 return false;
             }
-        }).slice(0, 15); // Show more files in workspace mode
+        }); // Show ALL files in workspace mode
         
         // Show folders first
         folders.forEach((folder, index) => {

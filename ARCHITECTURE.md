@@ -1,10 +1,17 @@
-# 🏗️ Ollama Jack Architecture Guide
+# 🏗️ Ollama Jack + Canvas Architecture Guide
 
 ## Overview
 
-Ollama Jack is a sophisticated AI development assistant built with a modular architecture designed for security, reliability, and human-in-the-loop precision.
+Ollama Jack is a sophisticated AI development assistant built with a modular architecture designed for security, reliability, and human-in-the-loop precision. **Canvas AI Orchestration** extends this with web-based document analysis and multi-agent AI synthesis.
 
 ## 🏛️ Core Architecture
+
+### Interdependent Systems Design
+
+**Jack** and **Canvas** are **interdependent but independent**:
+- ✅ **Jack works without Canvas**: Full terminal-based AI assistance
+- ✅ **Canvas works without Jack**: Complete web-based AI analysis
+- 🔗 **Together they form a unified AI ecosystem** with shared intelligence
 
 ### Workspace Targeting System
 
@@ -35,6 +42,43 @@ Windows (`hi-jack.bat`) and Unix (`hi-jack.sh`) scripts:
 - Capture current directory: `set TARGET_WORKSPACE=%CD%`
 - Pass to engine: `node hi-jack-engine.js "%TARGET_WORKSPACE%"`
 - Set environment: `set HIJACK_TARGET_WORKSPACE=%TARGET_WORKSPACE%`
+
+### Workspace Targeting System
+
+Jack uses a sophisticated multi-level workspace targeting system that allows operation from any directory:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                 Targeting Priority System                  │
+│                                                             │
+│  1. Command Line Arguments (highest priority)              │
+│  2. HIJACK_TARGET_WORKSPACE environment variable           │
+│  3. HIJACK_WORKSPACE environment variable                  │
+│  4. Current working directory (fallback)                   │
+│                                                             │
+│  Implementation: hi-jack-engine.js:108-110                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ this.workspaceRoot =                               │   │
+│  │   this.targetWorkspace ||                           │   │
+│  │   process.env.HIJACK_TARGET_WORKSPACE ||            │   │
+│  │   process.env.HIJACK_WORKSPACE ||                   │   │
+│  │   process.cwd();                                   │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Batch Script Integration
+Windows (`hi-jack.bat`) and Unix (`hi-jack.sh`) scripts:
+- Capture current directory: `set TARGET_WORKSPACE=%CD%`
+- Pass to engine: `node hi-jack-engine.js "%TARGET_WORKSPACE%"`
+- Set environment: `set HIJACK_TARGET_WORKSPACE=%TARGET_WORKSPACE%`
+
+### Interdependent Systems Design
+
+**Jack** and **Canvas** are **interdependent but independent**:
+- ✅ **Jack works without Canvas**: Full terminal-based AI assistance
+- ✅ **Canvas works without Jack**: Complete web-based AI analysis
+- 🔗 **Together they form a unified AI ecosystem** with shared intelligence
 
 ### System Flow Diagram
 ```
@@ -80,6 +124,40 @@ Windows (`hi-jack.bat`) and Unix (`hi-jack.sh`) scripts:
 
 ## 📦 Component Breakdown
 
+### **Canvas AI Orchestration System** (`canvas/canvas-with-observation-feeds.html`)
+**Purpose**: Web-based AI document analysis and synthesis interface
+**Responsibilities**:
+- Multi-agent AI analysis with 5 specialized systems
+- Document synthesis and collaborative intelligence
+- Live observation feeds and real-time AI insights
+- Data accumulation and persistence
+
+**Key Features**:
+- **DJINN**: Governance and decision-making analysis
+- **NAZAR**: Emotional intelligence and empathy analysis
+- **NARRA**: Pattern recognition and narrative analysis
+- **WHALE**: Deep contextual analysis and memory
+- **WATCHTOWER**: Operational monitoring and oversight
+- Synthesis engine for collaborative AI output
+- localStorage and IndexedDB data persistence
+
+**Independence**: Canvas operates standalone with full AI analysis capabilities
+
+### **Canvas-Jack Integration Layer** (`hi-jack-engine.js`)
+**Purpose**: Bidirectional data synchronization between Canvas and Jack
+**Responsibilities**:
+- REST API endpoints for cross-system communication
+- Data accumulation and deduplication
+- Event-driven synchronization
+- Cross-session data persistence
+
+**Key Features**:
+- `/jack/canvas-storage-sync` endpoint for data accumulation
+- `/jack/canvas-status` endpoint for system monitoring
+- CORS-enabled communication (Port 11435)
+- localStorage and IndexedDB data merging
+- Historical data snapshots and analysis
+
 ### 1. **Rich CLI** (`rich-cli.js`)
 **Purpose**: Primary user interface and system control center
 **Responsibilities**:
@@ -87,12 +165,16 @@ Windows (`hi-jack.bat`) and Unix (`hi-jack.sh`) scripts:
 - System status monitoring
 - Configuration management
 - Interactive command processing
+- Canvas integration monitoring and control
 
 **Key Features**:
 - Real-time status updates
 - Model switching (local ↔ cloud)
 - Auto-accept mode toggle
 - Usage analytics display
+- **Canvas Status Display**: localStorage and IndexedDB data monitoring
+- **Cross-system Data Visualization**: Accumulated analysis data from Canvas
+- **Integration Health Monitoring**: Canvas-Jack connection status
 
 ### 2. **Main Hijacker** (`hijacker.js`)
 **Purpose**: Core AI engine and tool execution orchestrator
@@ -108,6 +190,127 @@ Windows (`hi-jack.bat`) and Unix (`hi-jack.sh`) scripts:
 - File system operations
 - Git repository management
 - Advanced tool call reasoning and result analysis
+
+## 🎭 AI Orchestration & Synthesis System
+
+### Multi-Agent AI Architecture
+Canvas implements a sophisticated 5-agent AI orchestration system for comprehensive analysis:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    AI AGENT ECOSYSTEM                            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │
+│  │   DJINN     │  │    NAZAR    │  │   NARRA     │  │   WHALE     │ │
+│  │ Governance  │  │  Emotional  │  │   Pattern   │  │    Deep     │ │
+│  │  Analysis   │  │Intelligence │  │Recognition  │  │  Analysis   │ │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘ │
+│           ▲              ▲              ▲              ▲             │
+│           │              │              │              │             │
+│           └──────────────┼──────────────┼──────────────┼─────────────┘
+│                          │              │              │             │
+│                   ┌──────▼──────────────▼──────────────▼─────┐       │
+│                   │            WATCHTOWER                     │       │
+│                   │        Operational Monitoring             │       │
+│                   └───────────────────────────────────────────┘       │
+└───────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   SYNTHESIS ENGINE                              │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │ Collaborative Intelligence Aggregation                 │    │
+│  │ • Multi-perspective Analysis Integration              │    │
+│  │ • Cross-agent Insight Correlation                     │    │
+│  │ • Evolutionary Synthesis Building                     │    │
+│  └─────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Agent Specializations
+
+**DJINN** - Governance & Decision Analysis
+- Strategic decision-making frameworks
+- Ethical consideration evaluation
+- Long-term impact assessment
+- Policy and governance insights
+
+**NAZAR** - Emotional Intelligence & Empathy
+- Sentiment and emotional context analysis
+- Human factors consideration
+- Empathy-driven insights
+- Social dynamics interpretation
+
+**NARRA** - Pattern Recognition & Narrative
+- Historical pattern identification
+- Narrative structure analysis
+- Trend extrapolation
+- Story-driven insights
+
+**WHALE** - Deep Contextual Analysis
+- Comprehensive context integration
+- Memory-based correlation
+- Holistic system understanding
+- Deep insight synthesis
+
+**WATCHTOWER** - Operational Monitoring
+- Real-time system health monitoring
+- Performance metrics analysis
+- Risk assessment and alerting
+- Operational oversight
+
+### Synthesis Engine Architecture
+
+**Phase 1: Individual Analysis**
+```
+Canvas Content → Agent Processing → Specialized Insights → Confidence Scoring
+```
+
+**Phase 2: Collaborative Integration**
+```
+Individual Insights → Correlation Analysis → Conflict Resolution → Unified Synthesis
+```
+
+**Phase 3: Evolutionary Building**
+```
+Previous Synthesis + New Insights → Incremental Enhancement → Versioned Output
+```
+
+## 🗄️ Data Accumulation & Persistence System
+
+### Multi-Layer Storage Architecture
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     DATA ACCUMULATION LAYERS                     │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │  localStorage   │  │   IndexedDB     │  │   Session       │ │
+│  │  (31 keys)      │  │   (3 stores)    │  │   Memory        │ │
+│  │                 │  │                 │  │                 │ │
+│  │ • Config/State  │  │ • Analysis Hist │  │ • Runtime       │ │
+│  │ • Session Data  │  │ • Synthesis Rep │  │ • Context       │ │
+│  │ • AI Memory     │  │ • AI Feeds      │  │ • State         │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   JACK META-ANALYSIS                            │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │ Cross-Session Data Correlation                         │    │
+│  │ • Historical Trend Analysis                           │    │
+│  │ • Pattern Recognition Across Sessions                 │    │
+│  │ • Evolutionary Insight Synthesis                      │    │
+│  └─────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Data Flow Architecture
+```
+Canvas Analysis → localStorage Sync → Jack Accumulation → IndexedDB Storage
+       ↓              ↓              ↓              ↓
+   AI Feeds      State Persistence  Deduplication  Historical Archive
+       ↓              ↓              ↓              ↓
+   Synthesis     Session Continuity Cross-Analysis  Meta-Insights
+```
 
 ## 🧠 Tool Call Reasoning System
 

@@ -188,6 +188,49 @@ Rich CLI > models
 
 ---
 
+## 🎭 **Canvas AI Orchestration System**
+
+**Canvas** is a powerful web-based AI analysis interface that works independently or with Jack for comprehensive document analysis.
+
+### **Launch Canvas**
+```bash
+# Open Canvas in your web browser
+# Navigate to: canvas/canvas-with-observation-feeds.html
+# Or use the launch script:
+./canvas/launch-canvas.bat  # Windows
+```
+
+### **Canvas AI Agents**
+Canvas features **5 specialized AI agents** for comprehensive analysis:
+
+- **🎭 DJINN**: Governance & decision-making analysis
+- **🔮 NAZAR**: Emotional intelligence & empathy analysis  
+- **🌊 NARRA**: Pattern recognition & narrative analysis
+- **🐋 WHALE**: Deep contextual analysis & memory
+- **🔱 WATCHTOWER**: Operational monitoring & oversight
+
+### **Canvas-Jack Data Integration**
+```bash
+# Check Canvas integration status
+Rich CLI > canvas-status
+
+# View accumulated analysis data
+# Shows: localStorage keys, IndexedDB stores, total records
+```
+
+**Data Accumulation:**
+- **Analysis History**: AI agent responses accumulate over sessions
+- **Synthesis Reports**: Collaborative AI outputs build historically  
+- **AI Feeds**: Live observation data persists and grows
+- **Cross-Session Correlation**: Jack performs meta-analysis on accumulated data
+
+### **Interdependent Operation**
+- ✅ **Canvas works without Jack**: Full AI analysis capabilities
+- ✅ **Jack works without Canvas**: Complete terminal AI assistance
+- 🔗 **Together**: Unified AI ecosystem with shared intelligence and data accumulation
+
+---
+
 ## 🔧 **Edit Control with Refactor**
 
 Now you have **3 edit control options**:

@@ -540,37 +540,41 @@ class OllamaJack {
                 context += '\n';
             }
 
-            // IndexedDB Analysis Data (big reports and history)
-            if (this.canvasIndexedDB) {
-                context += `📊 INDEXEDDB ANALYSIS DATA:\n`;
-                
-                // Canvas IndexedDB data
-                if (this.canvasIndexedDB.synthesisReports && this.canvasIndexedDB.synthesisReports.length > 0) {
-                    context += `• SYNTHESIS REPORTS: ${this.canvasIndexedDB.synthesisReports.length} reports available\n`;
-                }
-                
-                if (this.canvasIndexedDB.analysisHistory && this.canvasIndexedDB.analysisHistory.length > 0) {
-                    context += `• ANALYSIS HISTORY: ${this.canvasIndexedDB.analysisHistory.length} analysis cycles\n`;
-                }
-                
-                if (this.canvasIndexedDB.aiFeeds && this.canvasIndexedDB.aiFeeds.length > 0) {
-                    context += `• AI FEEDS: ${this.canvasIndexedDB.aiFeeds.length} feed entries\n`;
-                }
-
-                // DJINN Council IndexedDB data
-                if (this.canvasIndexedDB.consensusReports && this.canvasIndexedDB.consensusReports.length > 0) {
-                    context += `• CONSENSUS REPORTS: ${this.canvasIndexedDB.consensusReports.length} consensus reports\n`;
-                }
-                
-                if (this.canvasIndexedDB.intelligenceReports && this.canvasIndexedDB.intelligenceReports.length > 0) {
-                    context += `• INTELLIGENCE REPORTS: ${this.canvasIndexedDB.intelligenceReports.length} intelligence reports\n`;
-                }
-                
-                if (this.canvasIndexedDB.memberReports && this.canvasIndexedDB.memberReports.length > 0) {
-                    context += `• DJINN MEMBER REPORTS: ${this.canvasIndexedDB.memberReports.length} member reports\n`;
-                }
-                
+            // Analysis History, Synthesis Reports, and AI Feeds from Canvas
+            if (canvasData.analysisHistory && canvasData.analysisHistory.length > 0) {
+                context += `� ANALYSIS HISTORY (${canvasData.totalAnalysisEntries} entries):\n`;
+                const recentAnalyses = canvasData.analysisHistory.slice(-3); // Show last 3
+                recentAnalyses.forEach((analysis, index) => {
+                    const summary = (analysis.content || analysis.summary || JSON.stringify(analysis)).substring(0, 100) + '...';
+                    context += `• Analysis ${index + 1}: ${summary}\n`;
+                });
                 context += '\n';
+            }
+
+            if (canvasData.synthesisReports && canvasData.synthesisReports.length > 0) {
+                context += `🔬 SYNTHESIS REPORTS (${canvasData.totalSynthesisReports} reports):\n`;
+                const recentReports = canvasData.synthesisReports.slice(-2); // Show last 2
+                recentReports.forEach((report, index) => {
+                    const summary = (report.content || report.summary || JSON.stringify(report)).substring(0, 120) + '...';
+                    context += `• Report ${index + 1}: ${summary}\n`;
+                });
+                context += '\n';
+            }
+
+            if (canvasData.aiFeeds && canvasData.aiFeeds.length > 0) {
+                context += `🤖 AI FEEDS (${canvasData.totalFeedEntries} entries):\n`;
+                const recentFeeds = canvasData.aiFeeds.slice(-3); // Show last 3
+                recentFeeds.forEach((feed, index) => {
+                    const summary = (feed.content || feed.message || JSON.stringify(feed)).substring(0, 80) + '...';
+                    context += `• Feed ${index + 1}: ${summary}\n`;
+                });
+                context += '\n';
+            }
+
+            // Historical Data Snapshots for Comparative Analysis
+            if (canvasData.dataHistory && canvasData.dataHistory.length > 0) {
+                context += `📊 HISTORICAL DATA (${canvasData.dataHistory.length} snapshots available for comparative analysis)\n`;
+                context += `Latest snapshot: ${canvasData.dataHistory[canvasData.dataHistory.length - 1].timestamp}\n\n`;
             }
 
             context += `💡 You can reference this comprehensive Canvas and DJINN Council analysis in your responses. This includes both localStorage (current state) and IndexedDB (historical reports and big data). Suggest edits, builds, or improvements based on the document content, AI insights, council consensus, and strategic intelligence above. When making suggestions, reference specific insights from the analysis to justify your recommendations.`;
@@ -592,7 +596,15 @@ class OllamaJack {
             document: null,
             aiMemory: null,
             djinnCouncil: null,
-            lastUpdate: null
+            lastUpdate: null,
+            // Add IndexedDB data (actually global variables from Canvas)
+            analysisHistory: [],
+            synthesisReports: [],
+            aiFeeds: [],
+            dataHistory: [],
+            totalAnalysisEntries: 0,
+            totalSynthesisReports: 0,
+            totalFeedEntries: 0
         };
 
         try {
@@ -621,6 +633,35 @@ class OllamaJack {
             data.lastUpdate = this.readFromBrowserStorage('canvas_last_analysis') || 
                              this.readFromBrowserStorage('djinn_last_analysis') || 
                              'Unknown';
+
+            // Include IndexedDB data (global variables from Canvas)
+            if (this.canvasIndexedDB) {
+                // Analysis history
+                if (this.canvasIndexedDB.analysisHistory && Array.isArray(this.canvasIndexedDB.analysisHistory)) {
+                    data.analysisHistory = this.canvasIndexedDB.analysisHistory;
+                    data.totalAnalysisEntries = data.analysisHistory.length;
+                    data.hasData = true;
+                }
+
+                // Synthesis reports
+                if (this.canvasIndexedDB.synthesisReports && Array.isArray(this.canvasIndexedDB.synthesisReports)) {
+                    data.synthesisReports = this.canvasIndexedDB.synthesisReports;
+                    data.totalSynthesisReports = data.synthesisReports.length;
+                    data.hasData = true;
+                }
+
+                // AI feeds
+                if (this.canvasIndexedDB.aiFeeds && Array.isArray(this.canvasIndexedDB.aiFeeds)) {
+                    data.aiFeeds = this.canvasIndexedDB.aiFeeds;
+                    data.totalFeedEntries = data.aiFeeds.length;
+                    data.hasData = true;
+                }
+            }
+
+            // Include historical data snapshots for comparative analysis
+            if (this.canvasDataHistory && this.canvasDataHistory.length > 0) {
+                data.dataHistory = this.canvasDataHistory;
+            }
 
             return data;
         } catch (error) {
@@ -1362,7 +1403,7 @@ class OllamaJack {
                         properties: {
                             operation: {
                                 type: "string",
-                                enum: ["search_code", "grep_search", "list_directory", "read_file", "write_file", "execute_terminal_command", "run_tests", "web_search", "git_operations", "workflow", "planning", "general"],
+                                enum: ["search_code", "grep_search", "list_directory", "read_file", "write_file", "execute_terminal_command", "run_tests", "web_search", "git_operations", "workflow", "planning", "general", "canvas_grep_synthesis", "canvas_grep_feeds", "canvas_storage_search"],
                                 description: "The operation or workflow to constrain"
                             },
                             constraints: {
@@ -1528,6 +1569,98 @@ class OllamaJack {
                     parameters: {
                         type: "object",
                         properties: {},
+                        additionalProperties: false
+                    }
+                }
+            },
+            {
+                type: "function",
+                function: {
+                    name: "canvas_grep_synthesis",
+                    description: "Advanced grep search through Canvas synthesis reports with full constraint support. Searches through contextually aware synthesis reports for patterns, keywords, or content.",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            pattern: { 
+                                type: "string", 
+                                description: "Search pattern (supports regex when isRegex=true)" 
+                            },
+                            isRegex: { 
+                                type: "boolean", 
+                                description: "Whether pattern is a regular expression (default: false)",
+                                default: false
+                            },
+                            maxResults: { 
+                                type: "integer", 
+                                description: "Maximum number of results to return (default: 10)",
+                                default: 10
+                            },
+                            contextLines: { 
+                                type: "integer", 
+                                description: "Number of context lines before/after matches (default: 0)",
+                                default: 0
+                            },
+                            roundId: { 
+                                type: "string", 
+                                description: "Filter by specific synthesis round ID (optional)"
+                            },
+                            dateRange: { 
+                                type: "string", 
+                                description: "Date range filter (e.g., 'last_24h', 'last_week', '2025-10-01 to 2025-10-05')"
+                            },
+                            caseSensitive: {
+                                type: "boolean",
+                                description: "Case sensitive search (default: false)",
+                                default: false
+                            }
+                        },
+                        required: ["pattern"],
+                        additionalProperties: false
+                    }
+                }
+            },
+            {
+                type: "function",
+                function: {
+                    name: "canvas_grep_feeds",
+                    description: "Advanced grep search through AI feeds with full constraint support. Searches through real-time AI analysis feeds from DJINN, NAZAR, NARRA, WHALE, WATCHTOWER.",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            pattern: { 
+                                type: "string", 
+                                description: "Search pattern (supports regex when isRegex=true)" 
+                            },
+                            isRegex: { 
+                                type: "boolean", 
+                                description: "Whether pattern is a regular expression (default: false)",
+                                default: false
+                            },
+                            agentFilter: { 
+                                type: "array", 
+                                items: { type: "string" },
+                                description: "Filter by specific AI agents (e.g., ['DJINN', 'NAZAR'])"
+                            },
+                            maxResults: { 
+                                type: "integer", 
+                                description: "Maximum number of results to return (default: 10)",
+                                default: 10
+                            },
+                            contentType: { 
+                                type: "string", 
+                                description: "Filter by content type (governance, emotional, pattern, analysis, operational)"
+                            },
+                            dateRange: { 
+                                type: "string", 
+                                description: "Date range filter (e.g., 'last_24h', 'last_week')"
+                            },
+                            caseSensitive: {
+                                type: "boolean",
+                                description: "Case sensitive search (default: false)",
+                                default: false
+                            }
+                        },
+                        required: ["pattern"],
                         additionalProperties: false
                     }
                 }
@@ -1867,6 +2000,14 @@ class OllamaJack {
 
                 case 'canvas_storage_status':
                     result = await this.handleCanvasStorageStatus();
+                    break;
+
+                case 'canvas_grep_synthesis':
+                    result = await this.handleCanvasGrepSynthesis(args);
+                    break;
+
+                case 'canvas_grep_feeds':
+                    result = await this.handleCanvasGrepFeeds(args);
                     break;
                     
                 default:
@@ -4072,6 +4213,91 @@ class OllamaJack {
             }
         });
 
+        // Export Canvas data to files
+        this.app.post('/jack/canvas-export', (req, res) => {
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+            
+            try {
+                const {
+                    canvasContent,
+                    aiFeeds,
+                    synthesisReports,
+                    analysisHistory,
+                    observations,
+                    systemMetrics,
+                    timestamp
+                } = req.body;
+
+                const fs = require('fs');
+                const path = require('path');
+                const exportDir = path.join(__dirname, 'canvas', 'storage');
+                
+                // Ensure directory exists
+                if (!fs.existsSync(exportDir)) {
+                    fs.mkdirSync(exportDir, { recursive: true });
+                }
+
+                const ts = timestamp ? new Date(timestamp).toISOString().slice(0, 19).replace(/:/g, '-') : new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+
+                // Write canvas content
+                if (canvasContent) {
+                    fs.writeFileSync(path.join(exportDir, `canvas_content_${ts}.md`), canvasContent);
+                }
+
+                // Write AI feeds organized by system
+                if (aiFeeds && aiFeeds.length > 0) {
+                    const feedsDir = path.join(exportDir, 'ai_feeds');
+                    if (!fs.existsSync(feedsDir)) fs.mkdirSync(feedsDir, { recursive: true });
+                    
+                    aiFeeds.forEach((feed, i) => {
+                        const system = feed.system || 'general';
+                        const systemDir = path.join(feedsDir, system);
+                        if (!fs.existsSync(systemDir)) fs.mkdirSync(systemDir, { recursive: true });
+                        fs.writeFileSync(path.join(systemDir, `feed_${i + 1}_${ts}.json`), JSON.stringify(feed, null, 2));
+                    });
+                }
+
+                // Write synthesis reports
+                if (synthesisReports && synthesisReports.length > 0) {
+                    const synthDir = path.join(exportDir, 'synthesis_reports');
+                    if (!fs.existsSync(synthDir)) fs.mkdirSync(synthDir, { recursive: true });
+                    
+                    synthesisReports.forEach((report, i) => {
+                        fs.writeFileSync(path.join(synthDir, `synthesis_report_${i + 1}_${ts}.json`), JSON.stringify(report, null, 2));
+                    });
+                }
+
+                // Write analysis history
+                if (analysisHistory && analysisHistory.length > 0) {
+                    const histDir = path.join(exportDir, 'analysis_history');
+                    if (!fs.existsSync(histDir)) fs.mkdirSync(histDir, { recursive: true });
+                    
+                    analysisHistory.forEach((history, i) => {
+                        fs.writeFileSync(path.join(histDir, `analysis_${i + 1}_${ts}.json`), JSON.stringify(history, null, 2));
+                    });
+                }
+
+                // Write observations
+                if (observations && observations.length > 0) {
+                    const obsDir = path.join(exportDir, 'observations');
+                    if (!fs.existsSync(obsDir)) fs.mkdirSync(obsDir, { recursive: true });
+                    fs.writeFileSync(path.join(obsDir, `observations_${ts}.json`), JSON.stringify(observations, null, 2));
+                }
+
+                // Write system metrics
+                if (systemMetrics) {
+                    fs.writeFileSync(path.join(exportDir, `system_metrics_${ts}.json`), JSON.stringify(systemMetrics, null, 2));
+                }
+
+                this.logToTerminal(`📁 Canvas data exported to ${exportDir}`);
+                res.json({ success: true, exportDir, timestamp: ts });
+            } catch (error) {
+                console.error('Canvas export error:', error);
+                res.status(500).json({ error: error.message });
+            }
+        });
+
         // Get Canvas data for Jack to read
         this.app.get('/jack/canvas-data', (req, res) => {
             res.header('Access-Control-Allow-Origin', '*');
@@ -4261,7 +4487,30 @@ class OllamaJack {
                     indexedDB: {
                         available: !!this.canvasIndexedDB,
                         storeCount: this.canvasIndexedDB ? Object.keys(this.canvasIndexedDB).length : 0,
-                        stores: this.canvasIndexedDB ? Object.keys(this.canvasIndexedDB) : []
+                        stores: this.canvasIndexedDB ? Object.keys(this.canvasIndexedDB) : [],
+                        // Include content summaries for Rich CLI display
+                        storeSummaries: this.canvasIndexedDB ? Object.entries(this.canvasIndexedDB).map(([storeName, data]) => {
+                            if (Array.isArray(data) && data.length > 0) {
+                                const latest = data[data.length - 1];
+                                return {
+                                    name: storeName,
+                                    recordCount: data.length,
+                                    latestTimestamp: latest._syncTimestamp || latest.timestamp || null,
+                                    latestPreview: (latest.content || latest.summary || latest.message || JSON.stringify(latest)).substring(0, 80) + '...'
+                                };
+                            } else {
+                                return {
+                                    name: storeName,
+                                    recordCount: 0,
+                                    latestTimestamp: null,
+                                    latestPreview: 'Empty store'
+                                };
+                            }
+                        }) : [],
+                        totalRecords: this.canvasIndexedDB ? 
+                            Object.values(this.canvasIndexedDB)
+                                .filter(data => Array.isArray(data))
+                                .reduce((sum, data) => sum + data.length, 0) : 0
                     },
                     recentPings: this.canvasPingHistory || []
                 };
@@ -4323,20 +4572,87 @@ class OllamaJack {
             
             try {
                 const { localStorage, indexedDB, source } = req.body;
+                const syncTimestamp = new Date().toISOString();
                 
-                // Store the provided data temporarily (replaces previous data)
-                this.canvasLocalStorage = localStorage || {};
-                this.canvasIndexedDB = indexedDB || {};
-                this.lastCanvasPingTime = new Date().toISOString();
+                // Initialize storage if not exists
+                if (!this.canvasLocalStorage) this.canvasLocalStorage = {};
+                if (!this.canvasIndexedDB) this.canvasIndexedDB = {};
+                if (!this.canvasDataHistory) this.canvasDataHistory = [];
+                
+                // ACCUMULATE localStorage data (don't overwrite - preserve history)
+                if (localStorage) {
+                    // Store current snapshot with timestamp
+                    const currentSnapshot = {
+                        timestamp: syncTimestamp,
+                        data: { ...localStorage },
+                        source: source || 'canvas'
+                    };
+                    
+                    // Add to history (keep last 10 snapshots for comparative analysis)
+                    this.canvasDataHistory.push(currentSnapshot);
+                    if (this.canvasDataHistory.length > 10) {
+                        this.canvasDataHistory = this.canvasDataHistory.slice(-10);
+                    }
+                    
+                    // Update current localStorage (merge with existing, don't overwrite)
+                    Object.assign(this.canvasLocalStorage, localStorage);
+                }
+                
+                // ACCUMULATE IndexedDB data (don't overwrite - preserve history)
+                if (indexedDB) {
+                    // For each IndexedDB store, accumulate data
+                    Object.keys(indexedDB).forEach(storeName => {
+                        if (!this.canvasIndexedDB[storeName]) {
+                            this.canvasIndexedDB[storeName] = [];
+                        }
+                        
+                        const newData = indexedDB[storeName];
+                        if (Array.isArray(newData)) {
+                            // For array data (like analysisHistory, synthesisReports), append new entries
+                            const existingData = this.canvasIndexedDB[storeName];
+                            
+                            // Add timestamp to each new entry
+                            const timestampedData = newData.map(entry => ({
+                                ...entry,
+                                _syncTimestamp: syncTimestamp,
+                                _source: source || 'canvas'
+                            }));
+                            
+                            // Append new data (avoid duplicates based on content/timestamp)
+                            timestampedData.forEach(newEntry => {
+                                const isDuplicate = existingData.some(existing => 
+                                    JSON.stringify(existing) === JSON.stringify(newEntry) ||
+                                    (existing.timestamp === newEntry.timestamp && existing._source === newEntry._source)
+                                );
+                                
+                                if (!isDuplicate) {
+                                    existingData.push(newEntry);
+                                }
+                            });
+                            
+                            // Keep only last 50 entries per store to prevent memory bloat
+                            if (existingData.length > 50) {
+                                this.canvasIndexedDB[storeName] = existingData.slice(-50);
+                            }
+                        } else {
+                            // For non-array data, just update
+                            this.canvasIndexedDB[storeName] = newData;
+                        }
+                    });
+                }
+                
+                this.lastCanvasPingTime = syncTimestamp;
                 this.canvasDataFreshFlag = true;
                 
                 // Add to ping history
                 if (!this.canvasPingHistory) this.canvasPingHistory = [];
                 this.canvasPingHistory.push({
-                    timestamp: this.lastCanvasPingTime,
+                    timestamp: syncTimestamp,
                     event: 'storage_sync',
                     source: source || 'canvas',
-                    type: 'data_update'
+                    type: 'data_update',
+                    localStorageKeys: Object.keys(localStorage || {}),
+                    indexedDBStores: Object.keys(indexedDB || {})
                 });
                 
                 // Keep only last 50 ping records
@@ -4344,13 +4660,20 @@ class OllamaJack {
                     this.canvasPingHistory = this.canvasPingHistory.slice(-50);
                 }
                 
-                console.log(`\x1b[96m📊 Canvas storage synced: ${Object.keys(localStorage || {}).length} localStorage keys, ${Object.keys(indexedDB || {}).length} IndexedDB stores\x1b[0m`);
+                const localStorageCount = Object.keys(this.canvasLocalStorage).length;
+                const indexedDBCount = Object.keys(this.canvasIndexedDB).length;
+                const historySnapshots = this.canvasDataHistory.length;
+                
+                console.log(`\x1b[96m📊 Canvas storage ACCUMULATED: ${localStorageCount} localStorage keys, ${indexedDBCount} IndexedDB stores, ${historySnapshots} historical snapshots\x1b[0m`);
                 
                 res.json({ 
                     success: true, 
-                    message: 'Storage data synced successfully',
-                    storedKeys: Object.keys(localStorage || {}),
-                    storedStores: Object.keys(indexedDB || {})
+                    message: 'Storage data accumulated successfully (historical data preserved)',
+                    accumulatedKeys: Object.keys(this.canvasLocalStorage),
+                    accumulatedStores: Object.keys(this.canvasIndexedDB),
+                    historySnapshots: historySnapshots,
+                    totalLocalStorageKeys: localStorageCount,
+                    totalIndexedDBStores: indexedDBCount
                 });
                 
             } catch (error) {
@@ -6691,6 +7014,305 @@ Always be thorough in explanations and proactive in suggesting improvements!`;
         } catch (error) {
             return { 
                 error: `Failed to get Canvas storage status: ${error.message}`,
+                details: error.stack 
+            };
+        }
+    }
+
+    async handleCanvasGrepSynthesis(args) {
+        try {
+            if (!this.canvasIndexedDB || !this.canvasIndexedDB.synthesisReports || !Array.isArray(this.canvasIndexedDB.synthesisReports)) {
+                return { 
+                    error: "Canvas synthesis reports not available. Make sure Canvas is running and has generated synthesis reports.",
+                    available: false 
+                };
+            }
+
+            const {
+                pattern,
+                isRegex = false,
+                maxResults = 10,
+                contextLines = 0,
+                roundId = null,
+                dateRange = null,
+                caseSensitive = false
+            } = args;
+
+            if (!pattern) {
+                return { error: "pattern parameter is required" };
+            }
+
+            // Apply active constraints from constrain tool
+            const activeConstraints = this.activeConstraints?.get('canvas_grep_synthesis');
+            const effectiveMaxResults = activeConstraints?.constraints?.maxResults || maxResults;
+            const effectiveContextLines = activeConstraints?.constraints?.contextLines || contextLines;
+
+            // Create search regex
+            let searchRegex;
+            try {
+                let regexPattern = pattern;
+                if (!isRegex) {
+                    regexPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                }
+                const flags = caseSensitive ? 'g' : 'gi';
+                searchRegex = new RegExp(regexPattern, flags);
+            } catch (error) {
+                return { error: `Invalid regex pattern: ${error.message}` };
+            }
+
+            const results = [];
+            const synthesisReports = this.canvasIndexedDB.synthesisReports;
+
+            // Filter by roundId if specified
+            let filteredReports = synthesisReports;
+            if (roundId) {
+                filteredReports = synthesisReports.filter(report => report.roundId === roundId);
+            }
+
+            // Filter by date range if specified
+            if (dateRange) {
+                const now = new Date();
+                let startDate, endDate;
+
+                if (dateRange === 'last_24h') {
+                    startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                    endDate = now;
+                } else if (dateRange === 'last_week') {
+                    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    endDate = now;
+                } else if (dateRange.includes(' to ')) {
+                    const [start, end] = dateRange.split(' to ');
+                    startDate = new Date(start);
+                    endDate = new Date(end);
+                }
+
+                if (startDate && endDate) {
+                    filteredReports = filteredReports.filter(report => {
+                        const reportDate = new Date(report.timestamp);
+                        return reportDate >= startDate && reportDate <= endDate;
+                    });
+                }
+            }
+
+            // Search through filtered reports
+            for (const report of filteredReports) {
+                if (results.length >= effectiveMaxResults) break;
+
+                const content = report.report || '';
+                const lines = content.split('\n');
+
+                for (let i = 0; i < lines.length && results.length < effectiveMaxResults; i++) {
+                    const line = lines[i];
+                    const matches = line.match(searchRegex);
+
+                    if (matches) {
+                        // Collect context lines if requested
+                        const contextBefore = effectiveContextLines > 0 ? 
+                            lines.slice(Math.max(0, i - effectiveContextLines), i) : [];
+                        const contextAfter = effectiveContextLines > 0 ? 
+                            lines.slice(i + 1, Math.min(lines.length, i + 1 + effectiveContextLines)) : [];
+
+                        results.push({
+                            roundId: report.roundId,
+                            timestamp: report.timestamp,
+                            lineNumber: i + 1,
+                            content: line,
+                            matches: matches.length,
+                            matchedText: matches,
+                            contextBefore: contextBefore,
+                            contextAfter: contextAfter,
+                            reportPreview: content.substring(0, 200) + (content.length > 200 ? '...' : '')
+                        });
+                    }
+                }
+            }
+
+            // Automatic commentary for analysis
+            if (results.length > 0) {
+                await this.handleCommentary(
+                    'analysis',
+                    `Canvas synthesis grep found ${results.length} matches for "${pattern}". Key insights span ${results.length} synthesis reports with ${results.reduce((sum, r) => sum + r.matches, 0)} total matches.`,
+                    'normal'
+                );
+            } else {
+                await this.handleCommentary(
+                    'analysis', 
+                    `Canvas synthesis grep for "${pattern}" returned no matches. ${filteredReports.length} synthesis reports were searched.`,
+                    'low'
+                );
+            }
+
+            return {
+                success: true,
+                pattern: pattern,
+                isRegex: isRegex,
+                totalReportsSearched: filteredReports.length,
+                matchCount: results.length,
+                results: results,
+                appliedConstraints: activeConstraints ? {
+                    maxResults: activeConstraints.constraints.maxResults,
+                    contextLines: activeConstraints.constraints.contextLines,
+                    reason: activeConstraints.reason
+                } : null
+            };
+        } catch (error) {
+            return { 
+                error: `Failed to search Canvas synthesis reports: ${error.message}`,
+                details: error.stack 
+            };
+        }
+    }
+
+    async handleCanvasGrepFeeds(args) {
+        try {
+            if (!this.canvasIndexedDB || !this.canvasIndexedDB.aiFeeds || !Array.isArray(this.canvasIndexedDB.aiFeeds)) {
+                return { 
+                    error: "Canvas AI feeds not available. Make sure Canvas is running and has active AI analysis.",
+                    available: false 
+                };
+            }
+
+            const {
+                pattern,
+                isRegex = false,
+                agentFilter = null,
+                maxResults = 10,
+                contentType = null,
+                dateRange = null,
+                caseSensitive = false
+            } = args;
+
+            if (!pattern) {
+                return { error: "pattern parameter is required" };
+            }
+
+            // Apply active constraints from constrain tool
+            const activeConstraints = this.activeConstraints?.get('canvas_grep_feeds');
+            const effectiveMaxResults = activeConstraints?.constraints?.maxResults || maxResults;
+
+            // Create search regex
+            let searchRegex;
+            try {
+                let regexPattern = pattern;
+                if (!isRegex) {
+                    regexPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                }
+                const flags = caseSensitive ? 'g' : 'gi';
+                searchRegex = new RegExp(regexPattern, flags);
+            } catch (error) {
+                return { error: `Invalid regex pattern: ${error.message}` };
+            }
+
+            const results = [];
+            const aiFeeds = this.canvasIndexedDB.aiFeeds;
+
+            // Filter by agent if specified
+            let filteredFeeds = aiFeeds;
+            if (agentFilter && Array.isArray(agentFilter) && agentFilter.length > 0) {
+                filteredFeeds = aiFeeds.filter(feed => {
+                    return agentFilter.some(agent => {
+                        const agentKey = agent.toLowerCase();
+                        return feed[agentKey] && typeof feed[agentKey] === 'object';
+                    });
+                });
+            }
+
+            // Filter by content type if specified
+            if (contentType) {
+                filteredFeeds = filteredFeeds.filter(feed => {
+                    return Object.values(feed).some(value => 
+                        typeof value === 'object' && value && value.type === contentType
+                    );
+                });
+            }
+
+            // Filter by date range if specified
+            if (dateRange) {
+                const now = new Date();
+                let startDate, endDate;
+
+                if (dateRange === 'last_24h') {
+                    startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                    endDate = now;
+                } else if (dateRange === 'last_week') {
+                    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    endDate = now;
+                }
+
+                if (startDate && endDate) {
+                    filteredFeeds = filteredFeeds.filter(feed => {
+                        const feedDate = new Date(feed.timestamp);
+                        return feedDate >= startDate && feedDate <= endDate;
+                    });
+                }
+            }
+
+            // Search through filtered feeds
+            for (const feed of filteredFeeds) {
+                if (results.length >= effectiveMaxResults) break;
+
+                // Search through each agent's content in the feed
+                for (const [agentKey, agentData] of Object.entries(feed)) {
+                    if (agentKey === 'timestamp' || typeof agentData !== 'object') continue;
+                    if (results.length >= effectiveMaxResults) break;
+
+                    const content = agentData.content || '';
+                    const lines = content.split('\n');
+
+                    for (let i = 0; i < lines.length && results.length < effectiveMaxResults; i++) {
+                        const line = lines[i];
+                        const matches = line.match(searchRegex);
+
+                        if (matches) {
+                            results.push({
+                                timestamp: feed.timestamp,
+                                agent: agentKey.toUpperCase(),
+                                contentType: agentData.type,
+                                confidence: agentData.confidence,
+                                lineNumber: i + 1,
+                                content: line,
+                                matches: matches.length,
+                                matchedText: matches,
+                                agentContent: content.substring(0, 150) + (content.length > 150 ? '...' : '')
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Automatic commentary for analysis
+            if (results.length > 0) {
+                const agents = [...new Set(results.map(r => r.agent))];
+                await this.handleCommentary(
+                    'analysis',
+                    `Canvas AI feeds grep found ${results.length} matches for "${pattern}" across ${agents.length} agents (${agents.join(', ')}). Analysis spans ${results.reduce((sum, r) => sum + r.matches, 0)} total matches.`,
+                    'normal'
+                );
+            } else {
+                await this.handleCommentary(
+                    'analysis',
+                    `Canvas AI feeds grep for "${pattern}" returned no matches. ${filteredFeeds.length} AI feed entries were searched.`,
+                    'low'
+                );
+            }
+
+            return {
+                success: true,
+                pattern: pattern,
+                isRegex: isRegex,
+                totalFeedsSearched: filteredFeeds.length,
+                matchCount: results.length,
+                results: results,
+                appliedConstraints: activeConstraints ? {
+                    maxResults: activeConstraints.constraints.maxResults,
+                    agentFilter: activeConstraints.constraints.agentFilter,
+                    contentType: activeConstraints.constraints.contentType,
+                    reason: activeConstraints.reason
+                } : null
+            };
+        } catch (error) {
+            return { 
+                error: `Failed to search Canvas AI feeds: ${error.message}`,
                 details: error.stack 
             };
         }

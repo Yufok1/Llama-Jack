@@ -18,6 +18,31 @@ Both systems share the same Ollama AI backend with intelligent resource coordina
 - **Resource Orchestration**: Automatic distribution preventing bottlenecks
 - **Unified Configuration**: Same `.env` and localStorage settings
 
+### **Enhanced Canvas Search Integration** 🚀
+**NEW: Jack now provides advanced search capabilities through Canvas data:**
+- **Synthesis Report Search**: Grep through contextually aware synthesis reports with regex support
+- **AI Feed Search**: Search through real-time AI analysis feeds from all 5 agents
+- **Constraint Integration**: Apply search limits, date ranges, and agent filters
+- **Commentary Integration**: Automatic analysis assessment between search operations
+
+**Example Canvas Search Workflow:**
+```bash
+# Set search constraints
+constrain({
+  operation: "canvas_grep_synthesis",
+  constraints: { maxResults: 5, dateRange: "last_24h" }
+})
+
+# Search synthesis reports
+canvas_grep_synthesis({ pattern: "machine learning" })
+
+# Search AI feeds by specific agent
+canvas_grep_feeds({ 
+  pattern: "error", 
+  agentFilter: ["DJINN", "WATCHTOWER"] 
+})
+```
+
 ### **Quick Integration**
 ```bash
 # 1. Start Llama Jack (terminal workspace)

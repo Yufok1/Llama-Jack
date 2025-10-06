@@ -24,6 +24,13 @@ node_modules/       # Dependencies - GIT EXCLUDED
 
 **Session-Only Credentials**: API keys are never persisted to disk. They exist only in memory during active sessions and must be provided fresh each launch for security.
 
+### **Canvas Web Interface Security**
+- 🌐 **Local-Only Operation**: Canvas runs entirely in browser with no external connections
+- 🗄️ **Client-Side Storage**: All data stored in browser localStorage/IndexedDB (user's machine only)
+- 🔄 **Optional Jack Sync**: Data sharing with Jack requires explicit CORS-enabled local connection
+- 🚫 **No External Data Transmission**: Canvas analysis stays within browser environment
+- 🔒 **Session Isolation**: Each browser session maintains separate data stores
+
 ### **Web Search Privacy**
 - 🔒 **Opt-In Only**: Web search requires explicit cloud mode activation
 - 🔒 **API Key Required**: No web requests without user-provided Ollama Cloud key
